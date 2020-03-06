@@ -40,14 +40,14 @@ public class TodocDbHelper extends SQLiteOpenHelper
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        sqLiteDatabase.execSQL(DELETE_PROJECTS_TABLE);
+        sqLiteDatabase.execSQL(DELETE_TASKS_TABLE);
         sqLiteDatabase.execSQL(CREATE_PROJECTS_TABLE);
         sqLiteDatabase.execSQL(CREATE_TASKS_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL(DELETE_PROJECTS_TABLE);
-        sqLiteDatabase.execSQL(DELETE_TASKS_TABLE);
         onCreate(sqLiteDatabase);
     }
 
