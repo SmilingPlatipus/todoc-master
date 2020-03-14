@@ -1,6 +1,6 @@
 package com.cleanup.todoc.ui;
 
-import android.content.ContentValues;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -19,14 +19,17 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.cleanup.todoc.Injections.Injection;
+import com.cleanup.todoc.Injections.ViewModelFactory;
 import com.cleanup.todoc.R;
-import com.cleanup.todoc.db.TodocDbHelper;
+import com.cleanup.todoc.db.TodocDb;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>Home activity of the application which is displayed when the user opens the app.</p>
@@ -91,15 +94,13 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     @NonNull
     private TextView lblNoTasks;
 
-    private SQLiteDatabase db;
+    private TaskViewModel taskViewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        TodocDbHelper dbHelper = new TodocDbHelper(this);
-        db = dbHelper.getWritableDatabase();
 
         listTasks = findViewById(R.id.list_tasks);
         lblNoTasks = findViewById(R.id.lbl_no_task);
@@ -294,6 +295,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     /**
      * Sets the data of the Spinner with projects to associate to a new task
      */
+
     private void populateDialogSpinner() {
         final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, allProjects);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -326,5 +328,23 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
          * No sort
          */
         NONE
+    }
+
+    private void configureViewModel(){
+        ViewModelFactory mViewModelFactory = Injection.provideViewModelFactory(this);
+        this.taskViewModel = ViewModelProviders.of(this, mViewModelFactory).get(TaskViewModel.class);
+        this.taskViewModel.init();
+    }
+
+    private void getTasks(){
+        this.taskViewModel.getTasks().observe(this, this::updateTasksList);
+    }
+
+    private void deleteTask(Task task){
+        this.taskViewModel.deleteTask(task.getId());
+    }
+
+    private void updateTasksList(List<Task> tasks){
+        this.adapter.updateTasks(tasks);
     }
 }
