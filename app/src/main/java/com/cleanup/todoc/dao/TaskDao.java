@@ -4,7 +4,6 @@ import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
-import android.arch.persistence.room.Update;
 
 import com.cleanup.todoc.model.Task;
 
@@ -18,9 +17,6 @@ public interface TaskDao
 
     @Insert
     long insertTask(Task task);
-
-    @Update
-    int updateTask(Task task);
 
     @Query("DELETE FROM task WHERE id = :id")
     int deleteTask(long id);

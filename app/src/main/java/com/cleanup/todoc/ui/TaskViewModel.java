@@ -51,15 +51,12 @@ public class TaskViewModel extends ViewModel
         return taskDataSource.getTasks();
     }
 
-    public void createTask(Task task) {
+    public long createTask(Task task) {
         executor.execute(() -> taskDataSource.createTask(task));
+        return task.getId();
     }
 
     public void deleteTask(long id) {
         executor.execute(() -> taskDataSource.deleteTask(id));
-    }
-
-    public void updateTask(Task task) {
-        executor.execute(() -> taskDataSource.updateTask(task));
     }
 }

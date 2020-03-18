@@ -19,12 +19,9 @@ public class TaskDataRepository
 
     // --- CREATE ---
 
-    public void createTask(Task task){ taskDao.insertTask(task); }
+    public long createTask(Task task){ return taskDao.insertTask(task); }
 
     // --- DELETE ---
     public void deleteTask(long id){ taskDao.deleteTask(id); }
-
-    // --- UPDATE ---
-    public void updateTask(Task task){ taskDao.updateTask(task); }
 
 }

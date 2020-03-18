@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.cleanup.todoc.Injections.Injection;
 import com.cleanup.todoc.Injections.ViewModelFactory;
 import com.cleanup.todoc.R;
+import com.cleanup.todoc.Repositories.TaskDataRepository;
 import com.cleanup.todoc.db.TodocDb;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
@@ -96,11 +97,15 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
     private TaskViewModel taskViewModel;
 
+
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        configureViewModel();
+
 
         listTasks = findViewById(R.id.list_tasks);
         lblNoTasks = findViewById(R.id.lbl_no_task);
@@ -170,17 +175,8 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
             }
             // If both project and name of the task have been set
             else if (taskProject != null) {
-                // TODO: Replace this by id of persisted task
-                long id = (long) (Math.random() * 50000);
-
-
-                Task task = new Task(
-                        id,
-                        taskProject.getId(),
-                        taskName,
-                        new Date().getTime()
-                );
-
+                Task task = new Task(taskProject.getId(), taskName, new Date().getTime());
+                task.setId(taskViewModel.createTask(task));
                 addTask(task);
 
                 dialogInterface.dismiss();
