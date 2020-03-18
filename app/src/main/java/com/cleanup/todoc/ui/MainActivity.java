@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      * List of all current tasks of the application
      */
     @NonNull
-    private final ArrayList<Task> tasks = new ArrayList<>();
+    private List<Task> tasks = new ArrayList<>();
 
     /**
      * The adapter which handles the list of tasks
@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
         setContentView(R.layout.activity_main);
         configureViewModel();
+        getTasks();
 
 
         listTasks = findViewById(R.id.list_tasks);
@@ -119,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
                 showAddTaskDialog();
             }
         });
+
     }
 
     @Override
@@ -141,7 +143,6 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
             sortMethod = SortMethod.RECENT_FIRST;
         }
 
-        updateTasks();
 
         return super.onOptionsItemSelected(item);
     }
@@ -149,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     @Override
     public void onDeleteTask(Task task) {
         tasks.remove(task);
-        updateTasks();
+        deleteTask(task);
     }
 
     /**
@@ -176,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
             // If both project and name of the task have been set
             else if (taskProject != null) {
                 Task task = new Task(taskProject.getId(), taskName, new Date().getTime());
-                task.setId(taskViewModel.createTask(task));
+                taskViewModel.createTask(task);
                 addTask(task);
 
                 dialogInterface.dismiss();
@@ -213,14 +214,13 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      */
     private void addTask(@NonNull Task task) {
         tasks.add(task);
-        updateTasks();
     }
 
     /**
      * Updates the list of tasks in the UI
      */
-    private void updateTasks() {
-        if (tasks.size() == 0) {
+    private void updateTasks(List<Task> mtasks) {
+        if (mtasks.size() == 0) {
             lblNoTasks.setVisibility(View.VISIBLE);
             listTasks.setVisibility(View.GONE);
         } else {
@@ -334,6 +334,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
     private void getTasks(){
         this.taskViewModel.getTasks().observe(this, this::updateTasksList);
+        this.taskViewModel.getTasks().observe(this, this::updateTasks);
     }
 
     private void deleteTask(Task task){
@@ -341,6 +342,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     }
 
     private void updateTasksList(List<Task> tasks){
+        this.tasks = tasks;
         this.adapter.updateTasks(tasks);
     }
 }
