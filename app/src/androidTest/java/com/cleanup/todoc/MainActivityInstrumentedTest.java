@@ -1,16 +1,25 @@
 package com.cleanup.todoc;
 
+import android.arch.core.executor.testing.InstantTaskExecutorRule;
+import android.arch.persistence.room.Room;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.cleanup.todoc.db.TodocDb;
+import com.cleanup.todoc.model.Task;
 import com.cleanup.todoc.ui.MainActivity;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.Date;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -19,6 +28,7 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.cleanup.todoc.TestUtils.withRecyclerView;
+import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -30,8 +40,37 @@ import static org.junit.Assert.assertThat;
  */
 @RunWith(AndroidJUnit4.class)
 public class MainActivityInstrumentedTest {
+
+    private TodocDb database;
+    private static long PROJECT_ID = 1L;
+    private static Task demoTask = new Task(PROJECT_ID,"Demo Task",new Date().getTime());
+    @Rule
+    public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
+
+    @Before
+    public void initDb() throws Exception {
+        this.database = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getContext(),
+                                                     TodocDb.class)
+                .allowMainThreadQueries()
+                .build();
+    }
+
+    @After
+    public void closeDb() throws Exception {
+        database.close();
+    }
+
     @Rule
     public ActivityTestRule<MainActivity> rule = new ActivityTestRule<>(MainActivity.class);
+
+    @Test
+    public void insertAndGetUser() throws InterruptedException {
+        // BEFORE : Adding a new user and keeping its ID to retrieve it later
+        long taskId = this.database.taskDao().insertTask(demoTask);
+        // TEST
+        Task task = this.database.taskDao().getTask(taskId);
+        assertTrue(task.getName().equals(demoTask.getName()) && task.getId() == PROJECT_ID);
+    }
 
     @Test
     public void addAndRemoveTask() {

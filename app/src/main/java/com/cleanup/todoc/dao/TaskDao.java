@@ -15,6 +15,9 @@ public interface TaskDao
     @Query("SELECT * FROM task")
     LiveData<List<Task>> getTasks();
 
+    @Query("SELECT * FROM task WHERE id = :id")
+    Task getTask(long id);
+
     @Insert
     long insertTask(Task task);
 
