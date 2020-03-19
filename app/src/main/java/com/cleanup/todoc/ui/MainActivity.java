@@ -1,5 +1,6 @@
 package com.cleanup.todoc.ui;
 
+import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
@@ -344,5 +345,10 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     private void updateTasksList(List<Task> tasks){
         this.tasks = tasks;
         this.adapter.updateTasks(tasks);
+    }
+
+    // For testing
+    public TaskViewModel getViewModel(){
+        return taskViewModel;
     }
 }
