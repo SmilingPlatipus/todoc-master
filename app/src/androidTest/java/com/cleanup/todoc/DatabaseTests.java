@@ -1,11 +1,14 @@
 package com.cleanup.todoc;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
+import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Room;
+import android.content.ContentValues;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.cleanup.todoc.db.TodocDb;
+import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 
 import org.junit.After;
@@ -33,6 +36,10 @@ public class DatabaseTests
                                                      TodocDb.class)
                 .allowMainThreadQueries()
                 .build();
+
+        // Create Projet Tartampion for testing purposes
+
+        this.database.projectDao().insertProject(new Project(1L,"Projet Tartampion",0xFFEADAD1));
     }
 
     @After
