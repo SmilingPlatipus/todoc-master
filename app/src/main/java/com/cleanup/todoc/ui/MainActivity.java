@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
             sortMethod = SortMethod.RECENT_FIRST;
         }
 
-
+        updateTasks(tasks);
         return super.onOptionsItemSelected(item);
     }
 
